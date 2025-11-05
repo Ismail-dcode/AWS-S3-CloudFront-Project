@@ -7,7 +7,8 @@ All steps use the **AWS Console only** (no Terraform), and the setup stays **wit
 
 ## 🚀 Live Demo
 
-🔗 **Live Website:** [View on CloudFront]( d2bhhd6ys9k0o4.cloudfront.net)
+🔗 **Live Website:** 
+d2bhhd6ys9k0o4.cloudfront.net
 
 *(Hosted using AWS S3 + CloudFront)*
 
