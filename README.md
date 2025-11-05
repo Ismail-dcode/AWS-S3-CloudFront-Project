@@ -1,4 +1,4 @@
-# 🌐 AWS S3 + CloudFront Static Website (Free Tier Friendly)
+# 🌐 AWS S3 + CloudFront Static Website 
 
 Host a secure, long-lived **static website** on **Amazon S3** with **CloudFront** for HTTPS and global CDN caching — **without making your S3 bucket public**.  
 All steps use the **AWS Console only** (no Terraform), and the setup stays **within AWS Free Tier limits** for as long as possible.
