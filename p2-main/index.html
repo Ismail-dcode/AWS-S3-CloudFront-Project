@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Image Gallery</title>
+  <meta name="description" content="A clean, responsive, high-quality image gallery with CSS-only fullscreen preview & downloads." />
+  <style>
+    /* ===== THEME ===== */
+    :root{
+      --bg: #0b0e13;
+      --card: #11161f;
+      --muted: #8a96a8;
+      --fg: #e9eef7;
+      --accent: #7aa2ff;
+      --gap: 16px;
+      --radius: 18px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    /* ===== RESET ===== */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background: radial-gradient(1200px 800px at 20% -10%, #122033 0%, #0b0e13 50%) fixed;
+      color:var(--fg); font: 500 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+    }
+    img{display:block; max-width:100%; height:auto; }
+
+    /* ===== HEADER ===== */
+    .wrap{max-width:1200px; margin-inline:auto; padding:24px}
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: saturate(180%) blur(8px);
+      background: linear-gradient(180deg, rgba(11,14,19,.85), rgba(11,14,19,.55));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .brand{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 24px; margin:0 auto; max-width:1200px;
+    }
+    /* GitHub link in header */
+    .github-link{
+      display:inline-flex; align-items:center; gap:8px;
+      color:var(--fg); text-decoration:none; font-weight:600;
+      background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); padding:8px 12px; border-radius:10px;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .github-link:hover{ transform: translateY(-2px); background: rgba(255,255,255,.06); }
+    .github-link .gh-icon{ width:18px; height:18px; display:inline-block; background: currentColor; -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M12 .297c-6.6 0-12 5.4-12 12 0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.016-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.758-1.333-1.758-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.835 2.807 1.305 3.492.997.108-.775.418-1.305.76-1.605-2.665-.3-5.467-1.333-5.467-5.93 0-1.31.47-2.38 1.235-3.22-.123-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.29-1.552 3.296-1.23 3.296-1.23.653 1.653.242 2.873.119 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.807 5.625-5.48 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.898-.015 3.293 0 .32.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.6-5.4-12-12-12"/></svg>') center/contain no-repeat; mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M12 .297c-6.6 0-12 5.4-12 12 0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.016-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.758-1.333-1.758-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.835 2.807 1.305 3.492.997.108-.775.418-1.305.76-1.605-2.665-.3-5.467-1.333-5.467-5.93 0-1.31.47-2.38 1.235-3.22-.123-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.29-1.552 3.296-1.23 3.296-1.23.653 1.653.242 2.873.119 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.807 5.625-5.48 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.898-.015 3.293 0 .32.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.6-5.4-12-12-12"/></svg>') center/contain no-repeat; }
+
+    /* HERO/banner */
+    .hero{
+      margin: 26px 0; padding: 20px; border-radius: 14px;
+      background: linear-gradient(180deg, rgba(122,162,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(122,162,255,.06);
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      box-shadow: 0 8px 30px rgba(20,30,60,.35);
+    }
+    .hero .left {max-width:72%}
+    .hero h2 {margin:0; font-size:clamp(18px,2.4vw,26px)}
+    .hero p {margin:6px 0 0; color:var(--muted)}
+    .cta{padding:10px 14px; border-radius:10px; background:var(--accent); color:#071126; font-weight:700; text-decoration:none}
+    .logo{
+      width:36px; height:36px; border-radius:12px;
+      background: conic-gradient(from 210deg, #7aa2ff, #76f7d8, #b889ff, #7aa2ff);
+      filter: drop-shadow(0 6px 18px rgba(122,162,255,.35));
+      animation: spin 14s linear infinite;
+    }
+    @keyframes spin{ from{transform:rotate(0)} to{transform:rotate(360deg)} }
+    h1{font-size: clamp(20px, 3.6vw, 32px); margin:0}
+    .sub{color:var(--muted); font-size:14px}
+
+    /* ===== GALLERY ===== */
+    .gallery{
+      display:grid;
+      grid-template-columns: repeat( auto-fill, minmax(230px, 1fr) );
+      gap: var(--gap);
+      padding-block: 28px 60px;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius);
+      overflow: clip;
+      box-shadow: var(--shadow);
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+      position: relative;
+      isolation: isolate;
+    }
+    .card::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(400px 160px at 60% 0%, rgba(122,162,255,.15), transparent);
+      opacity:0; transition:opacity .25s ease;
+      pointer-events:none;
+    }
+    .card:hover{ transform: translateY(-4px); border-color: rgba(122,162,255,.35); }
+    .card:hover::after{opacity:1}
+
+    .thumb{
+      aspect-ratio: 4/3;
+      width:100%;
+      object-fit: cover;
+      transform: translateZ(0);
+      transition: transform .35s ease, filter .35s ease;
+      will-change: transform;
+      filter: saturate(1.05) contrast(1.02);
+    }
+    .card:hover .thumb{ transform: scale(1.05); }
+
+    .meta{
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 10px 12px 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .badge{
+      padding:4px 10px; border-radius: 999px;
+      background: rgba(122,162,255,.12);
+      color:#cfe0ff; border:1px solid rgba(122,162,255,.35);
+    }
+
+    /* ===== CARD ACTIONS (Download on each card) ===== */
+    .actions{
+      position:absolute; top:10px; right:10px; display:flex; gap:8px;
+      opacity:0; transform: translateY(-4px);
+      transition: opacity .25s ease, transform .25s ease;
+      z-index:2;
+    }
+    .card:hover .actions{ opacity:1; transform:none; }
+
+    .btn{
+      --bcol: rgba(255,255,255,.10);
+      --bor: rgba(255,255,255,.28);
+      display:inline-grid; place-items:center;
+      height:36px; min-width:36px; padding:0 10px;
+      border-radius:12px; color:#fff; text-decoration:none; font-size:13px;
+      background: var(--bcol); border:1px solid var(--bor);
+      backdrop-filter: blur(2px) saturate(140%);
+    }
+    .btn:hover{ background: rgba(255,255,255,.17) }
+    .icon{
+      width:18px; height:18px; display:inline-block; vertical-align:middle;
+      background: currentColor;
+      -webkit-mask: var(--mask) center/contain no-repeat;
+              mask: var(--mask) center/contain no-repeat;
+    }
+    /* Download icon mask (SVG path as data URI) */
+    .icon.download{ --mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M12 3a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4.007 4.007a1.25 1.25 0 0 1-1.386.27.99.99 0 0 1-.28-.27L7.02 11.707a1 1 0 1 1 1.414-1.414L10.707 12.9V4a1 1 0 0 1 1-1z"/><path d="M4 15a1 1 0 0 1 1 1v2h14v-2a1 1 0 1 1 2 0v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1z"/></svg>'); }
+
+    /* ===== LIGHTBOX (CSS-only via :target) ===== */
+    .lightbox{
+      position: fixed; inset:0; display:none;
+      align-items:center; justify-content:center;
+      background: rgba(6,9,14,.88);
+      backdrop-filter: blur(6px) saturate(140%);
+      padding: 28px;
+      z-index: 100;
+      animation: fadeIn .22s ease;
+    }
+    @keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+    .lightbox:target{ display:flex; }
+
+    .lightbox-inner{
+      position:relative; width:100%; display:grid; place-items:center;
+    }
+
+    .lightbox img{
+      max-width: min(92vw, 1600px);
+      max-height: 86vh;
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    }
+
+    .close{
+      position: fixed; top: 18px; right: 18px;
+      width: 42px; height: 42px; display:grid; place-items:center;
+      border-radius: 12px; text-decoration:none;
+      color: #fff; background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.18);
+      font-weight:700; font-size:22px; line-height:0;
+    }
+    .close:hover{ background: rgba(255,255,255,.14) }
+
+    /* ===== LIGHTBOX NAVIGATION & ACTIONS ===== */
+    .lightbox-actions {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 18px;
+      z-index: 101;
+    }
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+    .lightbox-nav .btn {
+      pointer-events: auto;
+      position: relative;
+      min-width: 60px;
+      height: 48px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(122,162,255,.18);
+      border: 1px solid rgba(122,162,255,.35);
+      color: #fff;
+      font-weight: 600;
+    }
+    .lightbox-nav .btn:hover {
+      background: rgba(122,162,255,.28);
+    }
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(122,162,255,.25), rgba(122,162,255,.18));
+      border-color: rgba(122,162,255,.55);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn.primary:hover{ background: linear-gradient(180deg, rgba(122,162,255,.35), rgba(122,162,255,.22)); }
+
+    /* ===== FOOTER ===== */
+    footer{
+      color:var(--muted); font-size:13px; text-align:center; padding-bottom: 40px;
+    }
+    a{color:var(--accent); text-decoration: none}
+    a:focus-visible, .close:focus-visible{ outline:2px solid var(--accent); outline-offset:3px }
+
+    /* ===== RESPONSIVE TWEAKS ===== */
+    @media (max-width: 520px){
+      .meta{font-size:12px}
+      .badge{padding:3px 8px}
+      .wrap{padding:16px}
+      .btn span.label{ display:none; } /* keep icon-only on small screens */
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>Prime Gallery</h1>
+        <div class="sub"> • Static web</div>
+      </div>
+      <a class="github-link" href="https://github.com/your-username/your-repo" target="_blank" rel="noopener noreferrer">
+        <span class="gh-icon" aria-hidden="true"></span>
+        GitHub
+      </a>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="wrap">
+    <article class="hero" aria-hidden="false">
+      <div class="left">
+        <h2>Curated high-quality photos</h2>
+        <p>Beautiful, responsive gallery — click an image to view full size and download.</p>
+      </div>
+      <a class="cta" href="#img1">Browse gallery</a>
+    </article>
+    <section class="gallery" aria-label="Image gallery" id="gallery">
+
+      <!-- ======== IMAGE SLOT 1 ======== -->
+      <figure class="card">
+        <!-- CARD ACTIONS: download -->
+        <div class="actions">
+          <a class="btn" href="images/img-1.jpg" download aria-label="Download image 1">
+            <span class="icon download" aria-hidden="true"></span>
+            <span class="label" style="margin-left:6px">Download</span>
+          </a>
+        </div>
+
+        <!-- Open lightbox -->
+        <a href="#img1" aria-label="Open image 1">
+          <img class="thumb" loading="lazy" src="images/img-1.jpg" alt="Image 1">
+        </a>
+
+        <figcaption class="meta">
+          <span>Image 1</span>
+          <span class="badge">4K</span>
+        </figcaption>
+      </figure>
+
+      <!-- LIGHTBOX -->
+      <div class="lightbox" id="img1" aria-modal="true" role="dialog">
+        <a class="close" href="#" aria-label="Close">×</a>
+        <div class="lightbox-inner">
+          <img src="images/img-1.jpg" alt="Image 1">
+          <div class="lightbox-nav">
+            <a class="btn" href="#img2" aria-label="Next image">Next &rarr;</a>
+          </div>
+          <div class="lightbox-actions">
+            <a class="btn primary" href="images/img-1.jpg" download aria-label="Download image 1 (full)">
+              <span class="icon download" aria-hidden="true"></span>
+              <span class="label" style="margin-left:6px">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== IMAGE SLOT 2 ======== -->
+      <figure class="card">
+        <div class="actions">
+          <a class="btn" href="images/img-2.jpg" download aria-label="Download image 2">
+            <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+          </a>
+        </div>
+        <a href="#img2" aria-label="Open image 2">
+          <img class="thumb" loading="lazy" src="images/img-2.jpg" alt="Image 2">
+        </a>
+        <figcaption class="meta">
+          <span>Image 2</span>
+          <span class="badge">HQ</span>
+        </figcaption>
+      </figure>
+      <div class="lightbox" id="img2">
+        <a class="close" href="#" aria-label="Close">×</a>
+        <div class="lightbox-inner">
+          <img src="images/img-2.jpg" alt="Image 2">
+          <div class="lightbox-nav">
+            <a class="btn" href="#img1" aria-label="Previous image">&larr; Prev</a>
+            <a class="btn" href="#img3" aria-label="Next image">Next &rarr;</a>
+          </div>
+          <div class="lightbox-actions">
+            <a class="btn primary" href="images/img-2.jpg" download aria-label="Download image 2 (full)">
+              <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== IMAGE SLOT 3 ======== -->
+      <figure class="card">
+        <div class="actions">
+          <a class="btn" href="images/img-3.jpg" download aria-label="Download image 3">
+            <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+          </a>
+        </div>
+        <a href="#img3" aria-label="Open image 3">
+          <img class="thumb" loading="lazy" src="images/img-3.jpg" alt="Image 3">
+        </a>
+        <figcaption class="meta">
+          <span>Image 3</span>
+          <span class="badge">HDR</span>
+        </figcaption>
+      </figure>
+      <div class="lightbox" id="img3">
+        <a class="close" href="#" aria-label="Close">×</a>
+        <div class="lightbox-inner">
+          <img src="images/img-3.jpg" alt="Image 3">
+          <div class="lightbox-nav">
+            <a class="btn" href="#img2" aria-label="Previous image">&larr; Prev</a>
+            <a class="btn" href="#img4" aria-label="Next image">Next &rarr;</a>
+          </div>
+          <div class="lightbox-actions">
+            <a class="btn primary" href="images/img-3.jpg" download aria-label="Download image 3 (full)">
+              <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== IMAGE SLOT 4 ======== -->
+      <figure class="card">
+        <div class="actions">
+          <a class="btn" href="images/img-4.jpg" download aria-label="Download image 4">
+            <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+          </a>
+        </div>
+        <a href="#img4" aria-label="Open image 4">
+          <img class="thumb" loading="lazy" src="images/img-4.jpg" alt="Image 4">
+        </a>
+        <figcaption class="meta">
+          <span>Image 4</span>
+          <span class="badge">Portrait</span>
+        </figcaption>
+      </figure>
+      <div class="lightbox" id="img4">
+        <a class="close" href="#" aria-label="Close">×</a>
+        <div class="lightbox-inner">
+          <img src="images/img-4.jpg" alt="Image 4">
+          <div class="lightbox-nav">
+            <a class="btn" href="#img3" aria-label="Previous image">&larr; Prev</a>
+            <a class="btn" href="#img5" aria-label="Next image">Next &rarr;</a>
+          </div>
+          <div class="lightbox-actions">
+            <a class="btn primary" href="images/img-4.jpg" download aria-label="Download image 4 (full)">
+              <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== IMAGE SLOT 5 ======== -->
+      <figure class="card">
+        <div class="actions">
+          <a class="btn" href="images/img-5.jpg" download aria-label="Download image 5">
+            <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+          </a>
+        </div>
+        <a href="#img5" aria-label="Open image 5">
+          <img class="thumb" loading="lazy" src="images/img-5.jpg" alt="Image 5">
+        </a>
+        <figcaption class="meta">
+          <span>Image 5</span>
+          <span class="badge">Landscape</span>
+        </figcaption>
+      </figure>
+      <div class="lightbox" id="img5">
+        <a class="close" href="#" aria-label="Close">×</a>
+        <div class="lightbox-inner">
+          <img src="images/img-5.jpg" alt="Image 5">
+          <div class="lightbox-nav">
+            <a class="btn" href="#img4" aria-label="Previous image">&larr; Prev</a>
+            <a class="btn" href="#img6" aria-label="Next image">Next &rarr;</a>
+          </div>
+          <div class="lightbox-actions">
+            <a class="btn primary" href="images/img-5.jpg" download aria-label="Download image 5 (full)">
+              <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== IMAGE SLOT 6 ======== -->
+      <figure class="card">
+        <div class="actions">
+          <a class="btn" href="images/img-6.jpg" download aria-label="Download image 6">
+            <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+          </a>
+        </div>
+        <a href="#img6" aria-label="Open image 6">
+          <img class="thumb" loading="lazy" src="images/img-6.jpg" alt="Image 6">
+        </a>
+        <figcaption class="meta">
+          <span>Image 6</span>
+          <span class="badge">Macro</span>
+        </figcaption>
+      </figure>
+      <div class="lightbox" id="img6">
+        <a class="close" href="#" aria-label="Close">×</a>
+        <div class="lightbox-inner">
+          <img src="images/img-6.jpg" alt="Image 6">
+          <div class="lightbox-nav">
+            <a class="btn" href="#img5" aria-label="Previous image">&larr; Prev</a>
+            <a class="btn" href="#img7" aria-label="Next image">Next &rarr;</a>
+          </div>
+          <div class="lightbox-actions">
+            <a class="btn primary" href="images/img-6.jpg" download aria-label="Download image 6 (full)">
+              <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== IMAGE SLOT 7 ======== -->
+      <figure class="card">
+        <div class="actions">
+          <a class="btn" href="images/img-7.jpg" download aria-label="Download image 7">
+            <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+          </a>
+        </div>
+        <a href="#img7" aria-label="Open image 7">
+          <img class="thumb" loading="lazy" src="images/img-7.jpg" alt="Image 7">
+        </a>
+        <figcaption class="meta">
+          <span>Image 7</span>
+          <span class="badge">City</span>
+        </figcaption>
+      </figure>
+      <div class="lightbox" id="img7">
+        <a class="close" href="#" aria-label="Close">×</a>
+        <div class="lightbox-inner">
+          <img src="images/img-7.jpg" alt="Image 7">
+          <div class="lightbox-nav">
+            <a class="btn" href="#img6" aria-label="Previous image">&larr; Prev</a>
+            <a class="btn" href="#img8" aria-label="Next image">Next &rarr;</a>
+          </div>
+          <div class="lightbox-actions">
+            <a class="btn primary" href="images/img-7.jpg" download aria-label="Download image 7 (full)">
+              <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== IMAGE SLOT 8 ======== -->
+      <figure class="card">
+        <div class="actions">
+          <a class="btn" href="images/img-8.jpg" download aria-label="Download image 8">
+            <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+          </a>
+        </div>
+        <a href="#img8" aria-label="Open image 8">
+          <img class="thumb" loading="lazy" src="images/img-8.jpg" alt="Image 8">
+        </a>
+        <figcaption class="meta">
+          <span>Image 8</span>
+          <span class="badge">Nature</span>
+        </figcaption>
+      </figure>
+      <div class="lightbox" id="img8">
+        <a class="close" href="#" aria-label="Close">×</a>
+        <div class="lightbox-inner">
+          <img src="images/img-8.jpg" alt="Image 8">
+          <div class="lightbox-actions">
+            <a class="btn primary" href="images/img-8.jpg" download aria-label="Download image 8 (full)">
+              <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== IMAGE SLOT 9 ======== -->
+      <figure class="card">
+        <div class="actions">
+          <a class="btn" href="images/img-9.jpg" download aria-label="Download image 9">
+            <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+          </a>
+        </div>
+        <a href="#img9" aria-label="Open image 9">
+          <img class="thumb" loading="lazy" src="images/img-9.jpg" alt="Image 9">
+        </a>
+        <figcaption class="meta">
+          <span>Image 9</span>
+          <span class="badge">Aerial</span>
+        </figcaption>
+      </figure>
+      <div class="lightbox" id="img9">
+        <a class="close" href="#" aria-label="Close">×</a>
+        <div class="lightbox-inner">
+          <img src="images/img-9.jpg" alt="Image 9">
+          <div class="lightbox-actions">
+            <a class="btn primary" href="images/img-9.jpg" download aria-label="Download image 9 (full)">
+              <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== IMAGE SLOT 10 ======== -->
+      <figure class="card">
+        <div class="actions">
+          <a class="btn" href="images/img-10.jpg" download aria-label="Download image 10">
+            <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+          </a>
+        </div>
+        <a href="#img10" aria-label="Open image 10">
+          <img class="thumb" loading="lazy" src="images/img-10.jpg" alt="Image 10">
+        </a>
+        <figcaption class="meta">
+          <span>Image 10</span>
+          <span class="badge">Studio</span>
+        </figcaption>
+      </figure>
+      <div class="lightbox" id="img10">
+        <a class="close" href="#" aria-label="Close">×</a>
+        <div class="lightbox-inner">
+          <img src="images/img-10.jpg" alt="Image 10">
+          <div class="lightbox-actions">
+            <a class="btn primary" href="images/img-10.jpg" download aria-label="Download image 10 (full)">
+              <span class="icon download"></span><span class="label" style="margin-left:6px">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+       Created with ❤️ • <a href="https://github.com/your-username/prime-gallery">View on GitHub</a>
+    </footer>
+  </main>
+</body>
+</html>
